@@ -1,5 +1,5 @@
 <?php
-
+# Serververbindung muss noch eingebunden werden, Als Datenbank muss die DB Marketbasket ausgewählt werden
 $pG1 = [15, 33, 25, 13, 15, 10, 22, 18, 32, 27, 17];
 $pG2 = [23, 34, 27, 17, 18, 12, 25, 20, 35, 29, 18];
 $pG3 = [31, 23, 23, 25, 23, 15, 28, 30, 38, 33, 24];
