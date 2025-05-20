@@ -75,3 +75,99 @@ BEGIN
 END
 GO
 
+USE [master]
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'Marketbasket')
+BEGIN
+    CREATE DATABASE Marketbasket;
+END
+GO
+
+USE Marketbasket;
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Produkte' AND type = 'U')
+BEGIN
+CREATE TABLE [dbo].[Produkte](
+	[ID] [int] NOT NULL,
+	[Produkt] [varchar](50) NULL,
+ CONSTRAINT [PK_Produkte] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Personen' AND type = 'U')
+BEGIN
+CREATE TABLE [dbo].[Personen](
+	[ID] [int] NOT NULL,
+	[Vorname] [varchar](50) NULL,
+	[Nachname] [varchar](50) NULL,
+	[Geburtstag] [date] NULL,
+	[Stadt] [varchar](50) NULL,
+	[Postleitzahl] [varchar](50) NULL,
+	[Straße] [varchar](50) NULL,
+	[Hausnummer] [varchar](10) NULL,
+ CONSTRAINT [PK_Personen] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Einkauf' AND type = 'U')
+BEGIN
+CREATE TABLE [dbo].[Einkauf](
+	[ID] [int] NOT NULL,
+	[PersonenID] [int] NULL,
+	[Einkaufsdatum] [datetime] NULL,
+ CONSTRAINT [PK_Einkauf] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Einkauf]  WITH CHECK ADD  CONSTRAINT [FK_Einkauf_Personen] FOREIGN KEY([PersonenID])
+REFERENCES [dbo].[Personen] ([ID])
+GO
+
+ALTER TABLE [dbo].[Einkauf] CHECK CONSTRAINT [FK_Einkauf_Personen]
+GO
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Einkauf_Produkte' AND type = 'U')
+BEGIN
+CREATE TABLE [dbo].[Einkauf_Produkte](
+	[ID] [int] NOT NULL,
+	[EinkaufID] [int] NULL,
+	[ProduktID] [int] NULL,
+ CONSTRAINT [PK_Einkauf_Produkte] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Einkauf_Produkte]  WITH CHECK ADD  CONSTRAINT [FK_Einkauf_Produkte_Einkauf] FOREIGN KEY([EinkaufID])
+REFERENCES [dbo].[Einkauf] ([ID])
+GO
+
+ALTER TABLE [dbo].[Einkauf_Produkte] CHECK CONSTRAINT [FK_Einkauf_Produkte_Einkauf]
+GO
+
+ALTER TABLE [dbo].[Einkauf_Produkte]  WITH CHECK ADD  CONSTRAINT [FK_Einkauf_Produkte_Produkte] FOREIGN KEY([ProduktID])
+REFERENCES [dbo].[Produkte] ([ID])
+GO
+
+ALTER TABLE [dbo].[Einkauf_Produkte] CHECK CONSTRAINT [FK_Einkauf_Produkte_Produkte]
+GO
+
+END
+GO
