@@ -174,3 +174,44 @@ GO
 
 END
 GO
+
+CREATE OR ALTER VIEW [dbo].[Market Basket 1]
+AS
+WITH Info AS (SELECT        OrderList.EinkaufID, OrderList.ProduktIDs
+                               FROM            (SELECT        EinkaufID, COUNT(ProduktID) AS ProduktIDs
+                                                         FROM            dbo.Einkauf_Produkte
+                                                         GROUP BY EinkaufID
+                                                         HAVING         (COUNT(ProduktID) >= 2)) AS OrderList INNER JOIN
+                                                        dbo.Einkauf AS Eink ON OrderList.EinkaufID = Eink.ID INNER JOIN
+                                                        dbo.Produkte AS Prod ON OrderList.ProduktIDs = Prod.ID)
+    SELECT        TOP (100) PERCENT Info1.ProduktIDs AS Product1, Info2.ProduktIDs AS Product2, COUNT(*) AS Frequency
+     FROM            Info AS Info1 INNER JOIN
+                              Info AS Info2 ON Info1.EinkaufID = Info2.EinkaufID AND Info1.ProduktIDs <> Info2.ProduktIDs AND Info1.ProduktIDs < Info2.ProduktIDs
+     GROUP BY Info1.ProduktIDs, Info2.ProduktIDs
+     ORDER BY Frequency
+GO
+
+Create OR Alter View MarketbasketMPSO AS
+WITH Info AS
+(SELECT
+	OrderList.EinkaufID,
+	OrderList.ProduktIDs
+FROM
+	(SELECT
+		EinkaufID,
+		COUNT(ProduktID) AS ProduktIDs
+	FROM Einkauf_Produkte
+	GROUP BY EinkaufID
+	HAVING COUNT(ProduktID) >= 2) AS OrderList
+JOIN Einkauf AS Eink ON OrderList.EinkaufID = Eink.ID
+JOIN Produkte AS Prod ON OrderList.ProduktIDs = Prod.ID)
+
+SELECT 
+	Info1.EinkaufID AS Einkaufsnummer,
+	Info1.ProduktIDs AS Product1,
+	Info2.ProduktIDs AS Product2
+FROM Info AS Info1
+JOIN Info AS Info2 ON Info1.EinkaufID = Info2.EinkaufID
+WHERE Info1.ProduktIDs != Info2.ProduktIDs 
+  AND Info1.ProduktIDs < Info2.ProduktIDs;
+GO
