@@ -87,7 +87,7 @@ GO
 USE Marketbasket;
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Produkte' AND type = 'U')
+IF NOT EXISTS (SELECT * FROM Marketbasket.tables WHERE name = 'Produkte' AND type = 'U')
 BEGIN
 CREATE TABLE [dbo].[Produkte](
 	[ID] [int] NOT NULL,
@@ -101,7 +101,7 @@ END
 GO
 
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Personen' AND type = 'U')
+IF NOT EXISTS (SELECT * FROM Marketbasket.tables WHERE name = 'Personen' AND type = 'U')
 BEGIN
 CREATE TABLE [dbo].[Personen](
 	[ID] [int] NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE [dbo].[Personen](
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Einkauf' AND type = 'U')
+IF NOT EXISTS (SELECT * FROM Marketbasket.tables WHERE name = 'Einkauf' AND type = 'U')
 BEGIN
 CREATE TABLE [dbo].[Einkauf](
 	[ID] [int] NOT NULL,
@@ -131,18 +131,9 @@ CREATE TABLE [dbo].[Einkauf](
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Einkauf]  WITH CHECK ADD  CONSTRAINT [FK_Einkauf_Personen] FOREIGN KEY([PersonenID])
-REFERENCES [dbo].[Personen] ([ID])
-GO
-
-ALTER TABLE [dbo].[Einkauf] CHECK CONSTRAINT [FK_Einkauf_Personen]
-GO
 END
 GO
-
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE name = 'Einkauf_Produkte' AND type = 'U')
+IF NOT EXISTS (SELECT * FROM Marketbasket.tables WHERE name = 'Einkauf_Produkte' AND type = 'U')
 BEGIN
 CREATE TABLE [dbo].[Einkauf_Produkte](
 	[ID] [int] NOT NULL,
@@ -153,7 +144,19 @@ CREATE TABLE [dbo].[Einkauf_Produkte](
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
 GO
+
+
+ALTER TABLE [dbo].[Einkauf]  WITH CHECK ADD  CONSTRAINT [FK_Einkauf_Personen] FOREIGN KEY([PersonenID])
+REFERENCES [dbo].[Personen] ([ID])
+GO
+
+ALTER TABLE [dbo].[Einkauf] CHECK CONSTRAINT [FK_Einkauf_Personen]
+GO
+END
+GO
+
 
 ALTER TABLE [dbo].[Einkauf_Produkte]  WITH CHECK ADD  CONSTRAINT [FK_Einkauf_Produkte_Einkauf] FOREIGN KEY([EinkaufID])
 REFERENCES [dbo].[Einkauf] ([ID])
